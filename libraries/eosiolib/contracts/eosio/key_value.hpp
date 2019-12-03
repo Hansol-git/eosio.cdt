@@ -126,11 +126,10 @@ public:
 
    };
 
-   // TODO: Is db param == to table_name.value()?
-
-
-
-   kv_table(eosio::name contract_name, eosio::name table_name): contract_name{contract_name}, table_name{table_name} {}
+   void init(eosio::name contract_name, eosio::name table_name, index primary_index) {
+      contract_name = contract_name;
+      table_name = table_name;
+   }
 
    void upsert(T value) {
       std::string key = value.primary_key();
