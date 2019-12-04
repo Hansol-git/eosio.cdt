@@ -132,6 +132,7 @@ namespace eosio {
 template<typename T, typename K>
 class kv_table {
    constexpr static size_t max_stack_buffer_size = 512;
+   constexpr static int db = 1;
 
    enum class kv_it_stat {
       iterator_ok     = 0,  // Iterator is positioned at a key-value pair
@@ -150,7 +151,6 @@ class kv_table {
 
       // TODO: How to get db name and contract name to iterator?
       // And are these even correct/needed?
-      eosio::name table_name;
       eosio::name contract_name;
 
       iterator(uint32_t itr, kv_it_stat itr_stat): itr{itr}, itr_stat{itr_stat} {}
@@ -161,7 +161,7 @@ class kv_table {
          eosio::check(itr_stat != -2, "cannot read the end iterator");
          uint32_t offset = 0; // TODO??
          void* buffer = max_stack_buffer_size < size_t(data_size) ? malloc(size_t(data_size)) : alloca(size_t(data_size));
-         uint32_t copy_size = internal_use_do_not_use::kv_get_data(table_name.value, 0, (const char*)buffer, data_size);
+         uint32_t copy_size = internal_use_do_not_use::kv_get_data(db, 0, (const char*)buffer, data_size);
 
          datastream<const char*> ds( (char*)buffer, data_size);
 
@@ -213,7 +213,6 @@ public:
 
       // TODO: How to get db name and contract name to index?
       // And are these even correct/needed?
-      eosio::name table_name;
       eosio::name contract_name;
 
       index() = default;
@@ -227,33 +226,33 @@ public:
          datastream<char*> key_ds( (char*)key_buffer, key_size );
          key_ds << key;
 
-         auto success = internal_use_do_not_use::kv_get(table_name.value, contract_name.value, (const char*)key_buffer, key_size, value_size);
+         auto success = internal_use_do_not_use::kv_get(db, contract_name.value, (const char*)key_buffer, key_size, value_size);
          if (!success) {
             return end();
          }
 
          uint32_t offset = 0; // TODO??
          void* buffer = max_stack_buffer_size < size_t(value_size) ? malloc(size_t(value_size)) : alloca(size_t(value_size));
-         uint32_t copy_size = internal_use_do_not_use::kv_get_data(table_name.value, 0, (char*)buffer, value_size);
+         uint32_t copy_size = internal_use_do_not_use::kv_get_data(db, 0, (char*)buffer, value_size);
 
          datastream<const char*> ds( (char*)buffer, value_size);
 
          T val;
          ds >> val;
 
-         uint32_t itr = internal_use_do_not_use::kv_it_create(table_name.value, contract_name.value, "", 0);
+         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0);
          return {itr, kv_it_stat::iterator_end, key, val};
       }
 
       iterator end() {
-         uint32_t itr = internal_use_do_not_use::kv_it_create(table_name.value, contract_name.value, "", 0);
+         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0);
          int32_t itr_stat = internal_use_do_not_use::kv_it_move_to_end(itr);
 
          return {itr, static_cast<kv_it_stat>(itr_stat)};
       }
 
       iterator begin() {
-         uint32_t itr = internal_use_do_not_use::kv_it_create(table_name.value, contract_name.value, "", 0);
+         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0);
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
 
          return {itr, static_cast<kv_it_stat>(itr_stat)};
@@ -292,7 +291,7 @@ public:
       datastream<char*> key_ds( (char*)key_buffer, key_size );
       key_ds << key;
 
-      internal_use_do_not_use::kv_set(table_name.value, contract_name.value, (const char*)key_buffer, key_size, (const char*)data_buffer, data_size);
+      internal_use_do_not_use::kv_set(db, contract_name.value, (const char*)key_buffer, key_size, (const char*)data_buffer, data_size);
    }
 
    void erase(K key) {
@@ -304,7 +303,7 @@ public:
       auto itr = primary_index.find(key);
       eosio::check(itr != primary_index.end(), "this key is not in the table");
 
-      internal_use_do_not_use::kv_erase(table_name.value, contract_name.value, (const char*)key_buffer, key_size);
+      internal_use_do_not_use::kv_erase(db, contract_name.value, (const char*)key_buffer, key_size);
    }
 
 private:
