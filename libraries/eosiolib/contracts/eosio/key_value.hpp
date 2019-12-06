@@ -135,6 +135,8 @@ public:
       eosio::name name;
       K (T::*key_function)() const;
 
+      std::vector<uint32_t> iterators;
+
       eosio::name contract_name;
 
       // TODO: We need a way to store different indexes. See NOTES.md for one possible approach to encoding it in the key.
@@ -152,13 +154,25 @@ public:
          datastream<char*> key_ds( (char*)key_buffer, key_size );
          key_ds << key;
 
+         eosio::print_f("\n\nfind %\n", key);
+
          auto success = internal_use_do_not_use::kv_get(db, contract_name.value, (const char*)key_buffer, key_size, value_size);
          if (!success) {
             return end();
          }
 
-         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0); // TODO: prefix
-         kv_it_stat itr_stat = static_cast<kv_it_stat>(internal_use_do_not_use::kv_it_next(itr)); // TODO: This seems to be the fix to it_value??
+         eosio::print_f("success %\n", success);
+
+         if (iterators.size() == 0) {
+            uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0); // TODO: prefix
+            iterators.push_back(itr);
+         }
+         uint32_t itr = iterators[iterators.size() - 1];
+
+         kv_it_stat itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, (const char*) key_buffer, key_size);
+         auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, (const char*)key_buffer, key_size);
+         eosio::check(cmp == 0, "why did this fail");
+
          return {itr, itr_stat, value_size};
       }
 
