@@ -1,3 +1,4 @@
+#pragma once
 #include "../../core/eosio/datastream.hpp"
 #include "../../core/eosio/name.hpp"
 #include "../../core/eosio/print.hpp"
@@ -6,133 +7,59 @@
 
 namespace eosio {
    namespace internal_use_do_not_use {
-#if 0
       extern "C" {
          __attribute__((eosio_wasm_import))
-            void kv_erase(uint64_t db, uint64_t contract, const char* key, uint32_t key_size);
+         void kv_erase(uint64_t db, uint64_t contract, const char* key, uint32_t key_size);
 
          __attribute__((eosio_wasm_import))
-            void kv_set(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, const char* value, uint32_t value_size);
+         void kv_set(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, const char* value, uint32_t value_size);
 
          __attribute__((eosio_wasm_import))
-            bool kv_get(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, uint32_t& value_size);
+         bool kv_get(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, uint32_t& value_size);
 
          __attribute__((eosio_wasm_import))
-            uint32_t kv_get_data(uint64_t db, uint32_t offset, char* data, uint32_t data_size);
+         uint32_t kv_get_data(uint64_t db, uint32_t offset, char* data, uint32_t data_size);
 
          __attribute__((eosio_wasm_import))
-            uint32_t kv_it_create(uint64_t db, uint64_t contract, const char* prefix, uint32_t size);
+         uint32_t kv_it_create(uint64_t db, uint64_t contract, const char* prefix, uint32_t size);
 
          __attribute__((eosio_wasm_import))
-            void kv_it_destroy(uint32_t itr);
+         void kv_it_destroy(uint32_t itr);
 
          __attribute__((eosio_wasm_import))
-            int32_t kv_it_status(uint32_t itr);
+         int32_t kv_it_status(uint32_t itr);
 
          __attribute__((eosio_wasm_import))
-            int32_t kv_it_compare(uint32_t itr_a, uint32_t itr_b);
+         int32_t kv_it_compare(uint32_t itr_a, uint32_t itr_b);
 
          __attribute__((eosio_wasm_import))
-            int32_t kv_it_key_compare(uint32_t itr, const char* key, uint32_t size);
+         int32_t kv_it_key_compare(uint32_t itr, const char* key, uint32_t size);
 
          __attribute__((eosio_wasm_import))
-            int32_t kv_it_move_to_end(uint32_t itr);
+         int32_t kv_it_move_to_end(uint32_t itr);
 
          __attribute__((eosio_wasm_import))
-            int32_t kv_it_next(uint32_t itr);
+         int32_t kv_it_next(uint32_t itr);
 
          __attribute__((eosio_wasm_import))
-            int32_t kv_it_prev(uint32_t itr);
+         int32_t kv_it_prev(uint32_t itr);
 
          __attribute__((eosio_wasm_import))
-            int32_t kv_it_lower_bound(uint32_t itr, const char* key, uint32_t size);
+         int32_t kv_it_lower_bound(uint32_t itr, const char* key, uint32_t size);
 
          __attribute__((eosio_wasm_import))
-            int32_t kv_it_key(uint32_t itr, uint32_t offset, char* dest, uint32_t size, uint32_t& actual_size);
+         int32_t kv_it_key(uint32_t itr, uint32_t offset, char* dest, uint32_t size, uint32_t& actual_size);
 
          __attribute__((eosio_wasm_import))
-            int32_t kv_it_value(uint32_t itr, uint32_t offset, char* dest, uint32_t size, uint32_t& actual_size);
-      }
-#endif
-      void kv_erase(uint64_t db, uint64_t contract, const char* key, uint32_t key_size) {
-         eosio::print_f("KV_ERASE\n");
-      }
-
-      void kv_set(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, const char* value, uint32_t value_size) {
-         eosio::print_f("KV_SET\n");
-      }
-
-      bool kv_get(uint64_t db, uint64_t contract, const char* key, uint32_t key_size, uint32_t& value_size) {
-         eosio::print_f("KV_GET\n");
-         return 0;
-      }
-
-      uint32_t kv_get_data(uint64_t db, uint32_t offset, char* data, uint32_t data_size) {
-         eosio::print_f("KV_GET_DATA\n");
-         return 0;
-      }
-
-      uint32_t kv_it_create(uint64_t db, uint64_t contract, const char* prefix, uint32_t size) {
-         eosio::print_f("KV_IT_CREATE\n");
-         return 0;
-      }
-
-      void kv_it_destroy(uint32_t itr) {
-         eosio::print_f("KV_IT_DESTROY\n");
-      }
-
-      int32_t kv_it_status(uint32_t itr) {
-         eosio::print_f("KV_IT_STATUS\n");
-         return 0;
-      }
-
-      int32_t kv_it_compare(uint32_t itr_a, uint32_t itr_b) {
-         eosio::print_f("KV_IT_COMPARE\n");
-         return 0;
-      }
-
-      int32_t kv_it_key_compare(uint32_t itr, const char* key, uint32_t size) {
-         eosio::print_f("KV_IT_KEY_COMPARE\n");
-         return 0;
-      }
-
-      int32_t kv_it_move_to_end(uint32_t itr) {
-         eosio::print_f("KV_IT_MOVE_TO_END\n");
-         return 0;
-      }
-
-      int32_t kv_it_next(uint32_t itr) {
-         eosio::print_f("KV_IT_NEXT\n");
-         return 0;
-      }
-
-      int32_t kv_it_prev(uint32_t itr) {
-         eosio::print_f("KV_IT_PREV\n");
-         return 0;
-      }
-
-      int32_t kv_it_lower_bound(uint32_t itr, const char* key, uint32_t size) {
-         eosio::print_f("KV_IT_LOWER_BOUND\n");
-         return 0;
-      }
-
-      int32_t kv_it_key(uint32_t itr, uint32_t offset, char* dest, uint32_t size, uint32_t& actual_size) {
-         eosio::print_f("KV_IT_KEY\n");
-         return 0;
-      }
-
-      int32_t kv_it_value(uint32_t itr, uint32_t offset, char* dest, uint32_t size, uint32_t& actual_size) {
-         eosio::print_f("KV_IT_VALUE\n");
-         return 0;
+         int32_t kv_it_value(uint32_t itr, uint32_t offset, char* dest, uint32_t size, uint32_t& actual_size);
       }
    }
 
-// Can I determine K automatically??
 // This won't work with multiple indexes
 template<typename T, typename K>
 class kv_table {
    constexpr static size_t max_stack_buffer_size = 512;
-   constexpr static int db = 1;
+   constexpr static uint64_t db = eosio::name{"eosio.kvram"}.value;
 
    enum class kv_it_stat {
       iterator_ok     = 0,  // Iterator is positioned at a key-value pair
@@ -144,24 +71,24 @@ class kv_table {
       uint32_t itr;
       kv_it_stat itr_stat;
 
-      K _key; // TODO: Is this needed?
+      eosio::name contract_name;
+      uint32_t data_size;
+
+      K _key; // Make sure this doesn't get out of sync
       T data; // TODO: Is this needed?
 
-      uint32_t data_size; // TODO: Is this needed?
-
-      // TODO: How to get db name and contract name to iterator?
-      // And are these even correct/needed?
-      eosio::name contract_name;
-
       iterator(uint32_t itr, kv_it_stat itr_stat): itr{itr}, itr_stat{itr_stat} {}
+      iterator(uint32_t itr, kv_it_stat itr_stat, uint32_t data_size): itr{itr}, itr_stat{itr_stat}, data_size{data_size} {}
       iterator(uint32_t itr, kv_it_stat itr_stat, K _key, T data): itr{itr}, itr_stat{itr_stat}, _key{_key}, data{data} {}
 
       const T value() {
-         // TODO: kv_it_value
-         eosio::check(itr_stat != -2, "cannot read the end iterator");
+         // eosio::check(itr_stat != kv_it_stat::iterator_end, "cannot read the end iterator");
+
+         uint32_t actual_size;
          uint32_t offset = 0; // TODO??
+
          void* buffer = max_stack_buffer_size < size_t(data_size) ? malloc(size_t(data_size)) : alloca(size_t(data_size));
-         uint32_t copy_size = internal_use_do_not_use::kv_get_data(db, 0, (const char*)buffer, data_size);
+         internal_use_do_not_use::kv_it_value(itr, offset, (char*)buffer, data_size, actual_size);
 
          datastream<const char*> ds( (char*)buffer, data_size);
 
@@ -172,7 +99,7 @@ class kv_table {
       }
 
       const K key() {
-         eosio::check(itr_stat != kv_it_stat::iterator_end, "cannot read the end iterator");
+         // eosio::check(itr_stat != kv_it_stat::iterator_end, "cannot read the end iterator");
 
          size_t k_size = sizeof(K);
          void* buffer = max_stack_buffer_size < k_size ? malloc(k_size) : alloca(k_size);
@@ -211,9 +138,12 @@ public:
       eosio::name name;
       K (T::*key_function)() const;
 
-      // TODO: How to get db name and contract name to index?
+      // TODO: How to get contract name to index?
       // And are these even correct/needed?
       eosio::name contract_name;
+
+      // TODO: We need a way to store different indexes. See NOTES.md for one possible approach to encoding it in the key.
+      // Would need a function to help us build those keys.
 
       index() = default;
 
@@ -226,11 +156,14 @@ public:
          datastream<char*> key_ds( (char*)key_buffer, key_size );
          key_ds << key;
 
+         eosio::print_f("kv -- get % % %\n", db, contract_name, key_size);
          auto success = internal_use_do_not_use::kv_get(db, contract_name.value, (const char*)key_buffer, key_size, value_size);
+         eosio::print_f("kv -- success: % %\n", success, value_size);
          if (!success) {
             return end();
          }
 
+         /*
          uint32_t offset = 0; // TODO??
          void* buffer = max_stack_buffer_size < size_t(value_size) ? malloc(size_t(value_size)) : alloca(size_t(value_size));
          uint32_t copy_size = internal_use_do_not_use::kv_get_data(db, 0, (char*)buffer, value_size);
@@ -240,8 +173,10 @@ public:
          T val;
          ds >> val;
 
-         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0);
          return {itr, kv_it_stat::iterator_end, key, val};
+         */
+         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0);
+         return {itr, kv_it_stat::iterator_end, value_size};
       }
 
       iterator end() {
@@ -271,11 +206,17 @@ public:
       }
    };
 
-   // TODO: Multiple indexes
-   void init(eosio::name contract_name, eosio::name table_name, index primary_index) {
-      contract_name = contract_name;
-      table_name = table_name;
-      primary_index = primary_index;
+   kv_table() {
+      eosio::print_f("kv -- default constructor called\n");
+   }
+
+   void init(eosio::name contract, eosio::name table, index* primary) {
+      contract_name = contract;
+      table_name = table;
+
+      // TODO Temporary, need support for multiple indexes
+      primary_index = primary;
+      primary_index->contract_name = contract;
    }
 
    void upsert(T value) {
@@ -291,17 +232,21 @@ public:
       datastream<char*> key_ds( (char*)key_buffer, key_size );
       key_ds << key;
 
+      eosio::print_f("kv -- contract_name: %\n", contract_name);
+
       internal_use_do_not_use::kv_set(db, contract_name.value, (const char*)key_buffer, key_size, (const char*)data_buffer, data_size);
    }
 
+   // May make sense to move this to an index.
+   // Then the table doesn't need to know anything about the indexes.
    void erase(K key) {
       size_t key_size = pack_size( key );
       void* key_buffer = max_stack_buffer_size < key_size ? malloc(key_size) : alloca(key_size);
       datastream<char*> key_ds( (char*)key_buffer, key_size );
       key_ds << key;
 
-      auto itr = primary_index.find(key);
-      eosio::check(itr != primary_index.end(), "this key is not in the table");
+      auto itr = primary_index->find(key);
+      eosio::check(itr != primary_index->end(), "this key is not in the table");
 
       internal_use_do_not_use::kv_erase(db, contract_name.value, (const char*)key_buffer, key_size);
    }
@@ -309,6 +254,6 @@ public:
 private:
    eosio::name contract_name;
    eosio::name table_name;
-   index primary_index;
+   index* primary_index;
 };
 } // eosio
