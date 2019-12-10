@@ -55,7 +55,6 @@ namespace eosio {
       }
    }
 
-// This won't work with multiple indexes
 template<typename T, typename K>
 class kv_table {
    constexpr static size_t max_stack_buffer_size = 512;
@@ -75,20 +74,22 @@ class kv_table {
 
       const T value() {
          uint32_t actual_size;
-         uint32_t offset = 0; // TODO??
+         uint32_t offset = 0; // TODO: How to use offset/is it needed?
 
          K _key = key();
-         uint32_t value_size;
+
          size_t key_size = pack_size(_key);
          void* key_buffer = max_stack_buffer_size < key_size ? malloc(key_size) : alloca(key_size);
          datastream<char*> key_ds((char*)key_buffer, key_size);
          key_ds << _key;
-         internal_use_do_not_use::kv_get(db, contract_name.value, (const char*)key_buffer, key_size, value_size);
-         size_t data_size = size_t(value_size);
 
+         uint32_t value_size;
+         internal_use_do_not_use::kv_get(db, contract_name.value, (const char*)key_buffer, key_size, value_size);
+
+         size_t data_size = size_t(value_size);
          void* buffer = max_stack_buffer_size < data_size ? malloc(data_size) : alloca(data_size);
          internal_use_do_not_use::kv_it_value(itr, offset, (char*)buffer, data_size, actual_size);
-         datastream<const char*> ds((char*)buffer, data_size);
+         datastream<const char*> ds((char*)buffer, actual_size);
 
          T val;
          ds >> val;
@@ -106,8 +107,8 @@ class kv_table {
 
       const K key() {
          uint32_t copy_size;
-         size_t key_size = sizeof(K);
 
+         size_t key_size = sizeof(K);
          void* buffer = max_stack_buffer_size < key_size ? malloc(key_size) : alloca(key_size);
          internal_use_do_not_use::kv_it_key(itr, 0, (char*)buffer, key_size, copy_size);
 
@@ -178,9 +179,6 @@ public:
 
       eosio::name contract_name;
 
-      // TODO: We need a way to store different indexes. See NOTES.md for one possible approach to encoding it in the key.
-      // Would need a function to help us build those keys.
-
       index() = default;
 
       index(eosio::name name, K (T::*key_function)() const): name{name}, key_function{key_function} {}
@@ -197,7 +195,7 @@ public:
             return end();
          }
 
-         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0); // TODO: prefix
+         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0);
 
          kv_it_stat itr_stat = static_cast<kv_it_stat>(internal_use_do_not_use::kv_it_lower_bound(itr, (const char*) key_buffer, key_size));
          auto cmp = internal_use_do_not_use::kv_it_key_compare(itr, (const char*)key_buffer, key_size);
@@ -227,14 +225,14 @@ public:
       }
 
       iterator end() {
-         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0); // TODO: prefix
+         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0);
          int32_t itr_stat = internal_use_do_not_use::kv_it_move_to_end(itr);
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat)};
       }
 
       iterator begin() {
-         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0); // TODO: prefix
+         uint32_t itr = internal_use_do_not_use::kv_it_create(db, contract_name.value, "", 0);
          int32_t itr_stat = internal_use_do_not_use::kv_it_lower_bound(itr, "", 0);
 
          return {contract_name, itr, static_cast<kv_it_stat>(itr_stat)};
@@ -271,7 +269,6 @@ public:
       contract_name = contract;
       table_name = table;
 
-      // TODO Temporary, need support for multiple indexes
       primary_index = primary;
       primary_index->contract_name = contract;
    }
@@ -303,6 +300,6 @@ public:
 private:
    eosio::name contract_name;
    eosio::name table_name;
-   index* primary_index; // TODO: Temporary
+   index* primary_index;
 };
 } // eosio
