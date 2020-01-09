@@ -88,6 +88,7 @@ The key-value store could provide a lexicographical ordering of uint8_t on the k
    [ ] - struct or tuple: transform each field in order. Concatenate results. (use tuples for composite keys)
 */
 
+#if 0
 template <typename T>
 inline T swap_endian(T u) {
     static_assert (CHAR_BIT == 8, "CHAR_BIT != 8");
@@ -105,6 +106,33 @@ inline T swap_endian(T u) {
     }
 
     return dest.u;
+}
+#endif
+
+template <typename T>
+inline T swap_endian(T val) {
+   static_assert(sizeof(T) <= 16);
+   if constexpr (sizeof(T) == 1)
+      return val;
+   else if constexpr (sizeof(T) == 2)
+      return (val << 8) | (std::make_unsigned_t<T>(val) >> 8);
+   else if constexpr (sizeof(T) == 4)
+      return __builtin_bswap32(val);
+   else if constexpr (sizeof(T) == 8)
+      return __builtin_bswap64(val);
+   else {
+      union i128_swap {
+         uint64_t high;
+         uint64_t low;
+         T        value;
+         i128_swap(const T& val) : value(val) {
+            uint64_t tmp = high;
+            high = __builtin_bswap64(low);
+            low = __builtin_bswap64(tmp);
+         }
+      };
+      return i128_swap(val).value;
+   }
 }
 
 inline key_type make_prefix(eosio::name table_name, eosio::name index_name, uint8_t status = 1) {
@@ -155,7 +183,7 @@ inline I flip_msb(I val) {
    return val ^ (static_cast<I>(1) << (BITS - 1));
 }
 
-template <typename I>
+template <typename I> // TODO: Use enable_if_t and is_integral to only do this for integers
 inline key_type make_key(I val) {
    using namespace detail;
 
