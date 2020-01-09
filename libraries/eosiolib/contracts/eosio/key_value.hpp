@@ -88,39 +88,31 @@ The key-value store could provide a lexicographical ordering of uint8_t on the k
    [ ] - struct or tuple: transform each field in order. Concatenate results. (use tuples for composite keys)
 */
 
-#if 0
-template <typename T>
-inline T swap_endian(T u) {
-    static_assert (CHAR_BIT == 8, "CHAR_BIT != 8");
-
-    union
-    {
-        T u;
-        unsigned char u8[sizeof(T)];
-    } source, dest;
-
-    source.u = u;
-
-    for (size_t k = 0; k < sizeof(T); k++) {
-        dest.u8[k] = source.u8[sizeof(T) - k - 1];
-    }
-
-    return dest.u;
-}
-#endif
-
 template <typename T>
 inline T swap_endian(T val) {
+   char* bytes = (char*)&val;
    static_assert(sizeof(T) <= 16);
-   if constexpr (sizeof(T) == 1)
+   if constexpr (sizeof(T) == 1) {
       return val;
-   else if constexpr (sizeof(T) == 2)
-      return (val << 8) | (std::make_unsigned_t<T>(val) >> 8);
-   else if constexpr (sizeof(T) == 4)
-      return __builtin_bswap32(val);
-   else if constexpr (sizeof(T) == 8)
-      return __builtin_bswap64(val);
-   else {
+   }
+   else if constexpr (sizeof(T) == 2) {
+      return bytes[0] << 8 | bytes[1];
+   }
+   else if constexpr (sizeof(T) == 4) {
+      union i32_swap {
+         T value;
+         uint32_t ui;
+         i32_swap(T v) : value(v) { ui = __builtin_bswap32(ui); }
+      };
+      return i32_swap(val).value;
+   } else if constexpr (sizeof(T) == 8) {
+      union i64_swap {
+         T value;
+         uint64_t ui;
+         i64_swap(T v) : value(v) { ui = __builtin_bswap64(ui); }
+      };
+      return i64_swap(val).value;
+   } else {
       union i128_swap {
          uint64_t high;
          uint64_t low;
