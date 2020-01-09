@@ -36,6 +36,15 @@ struct my_table : eosio::kv_table<my_struct, "testtable"_n> {
    }
 };
 
+DEFINE_TABLE(my_table_2, my_struct, "testtable", "eosio.kvram",
+      primary_key,
+      foo,
+      bar,
+      baz,
+      ifoo,
+      i128
+)
+
 class [[eosio::contract]] kv_multiple_indices_tests : public eosio::contract {
 public:
    using contract::contract;
