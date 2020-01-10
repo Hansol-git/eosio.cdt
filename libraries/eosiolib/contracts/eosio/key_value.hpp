@@ -80,7 +80,7 @@ The key-value store could provide a lexicographical ordering of uint8_t on the k
    [x] - int?_t: Invert the MSB then convert to big-endian
    [x] - strings: Convert 0x00 to (0x00, 0x01). Append (0x00, 0x00) to the end. This transform allows arbitrary-length strings.
    [x] - case-insensitive strings: Convert to upper-case, then apply the above transform. Assumes ASCII.
-   [ ] - floating-point:
+   [x] - floating-point:
          There's some bit manipulations, followed by an endian conversion
          limitations:
             Positive 0 and Negative 0 map to the same value
@@ -230,6 +230,8 @@ inline key_type make_floating_key(F val) {
 
 template <typename F, typename std::enable_if_t<std::is_floating_point<F>::value, int> = 0>
 inline key_type make_key(F val) {
+   static_assert(sizeof(F) != sizeof(long double), "long doubles are currently not supported by make_key");
+
    if (val == -0) {
       val = +0;
    }
@@ -237,12 +239,9 @@ inline key_type make_key(F val) {
    if (sizeof(F) == sizeof(float)) {
       return make_floating_key<uint32_t>(val);
    }
-   else if (sizeof(F) == sizeof(double)) {
+   else {
       return make_floating_key<uint64_t>(val);
-   } else {
-      // TODO: do we handle long doubles?
    }
-   return {};
 }
 
 inline key_type make_key(const char* str, size_t size, bool case_insensitive=false) {
